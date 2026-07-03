@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Acesso Simplificado</title>
-    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
-</head> 
+    <link rel="manifest" href="manifest.json">
+</head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col p-4 select-none">
 
     <div class="grid grid-cols-2 flex-1 min-h-[60vh] rounded-2xl overflow-hidden shadow-lg">
@@ -56,18 +56,24 @@
 
     <script>
         const dadosFluxo = {};
+        let ultimaHoraRegistrada = getHoraAtualStr();
 
         function getHoraAtualStr() {
             const agora = new Date();
             return `${String(agora.getHours()).padStart(2, '0')}:00`;
         }
 
-        function registrar(tipo, valor) {
+        // Garante que a hora atual sempre exista na nossa base de dados
+        function inicializarHoraAtual() {
             const horaAtual = getHoraAtualStr();
-            
             if (!dadosFluxo[horaAtual]) {
                 dadosFluxo[horaAtual] = { entradas: 0, saidas: 0 };
             }
+        }
+
+        function registrar(tipo, valor) {
+            const horaAtual = getHoraAtualStr();
+            inicializarHoraAtual();
 
             if (tipo === 'entrada') {
                 if (dadosFluxo[horaAtual].entradas + valor >= 0) {
@@ -79,19 +85,16 @@
                 }
             }
 
-            // Remove a hora do objeto se os contadores voltarem a ser zero
-            if (dadosFluxo[horaAtual].entradas === 0 && dadosFluxo[horaAtual].saidas === 0) {
-                delete dadosFluxo[horaAtual];
-            }
-
             atualizarInterface();
         }
 
         function atualizarInterface() {
             const horaAtual = getHoraAtualStr();
+            inicializarHoraAtual();
             
-            document.getElementById('btn-entrada-txt').innerText = dadosFluxo[horaAtual]?.entradas || 0;
-            document.getElementById('btn-saida-txt').innerText = dadosFluxo[horaAtual]?.saidas || 0;
+            // Atualiza os números grandes da tela com base APENAS na hora atual
+            document.getElementById('btn-entrada-txt').innerText = dadosFluxo[horaAtual].entradas;
+            document.getElementById('btn-saida-txt').innerText = dadosFluxo[horaAtual].saidas;
 
             const tabelaCorpo = document.getElementById('tabela-horarios');
             const listaVazia = document.getElementById('lista-vazia');
@@ -101,26 +104,35 @@
             let totalGeralEntradas = 0;
             let totalGeralSaidas = 0;
 
+            // Pega todas as horas registradas e ordena da mais recente para a mais antiga
             const horariosComDados = Object.keys(dadosFluxo).sort((a, b) => b.localeCompare(a));
 
-            if (horariosComDados.length === 0) {
+            // Filtra para não mostrar linhas totalmente zeradas no histórico, mantendo o painel limpo
+            const horariosVisiveis = horariosComDados.filter(hora => dadosFluxo[hora].entradas > 0 || dadosFluxo[hora].saidas > 0);
+
+            if (horariosVisiveis.length === 0) {
                 listaVazia.classList.remove('hidden');
                 tabelaCorpo.classList.add('hidden');
             } else {
                 listaVazia.classList.add('hidden');
                 tabelaCorpo.classList.remove('hidden');
 
-                horariosComDados.forEach(hora => {
+                horariosVisiveis.forEach(hora => {
                     const entradas = dadosFluxo[hora].entradas;
                     const saidas = dadosFluxo[hora].saidas;
                     
+                    // O saldo acumulado geral continua contando tudo, mesmo de horas passadas
                     totalGeralEntradas += entradas;
                     totalGeralSaidas += saidas;
 
                     const divLinha = document.createElement('div');
-                    divLinha.className = "flex justify-between items-center py-3 text-sm font-medium";
+                    divLinha.className = `flex justify-between items-center py-3 text-sm font-medium ${hora === horaAtual ? 'border-b border-dashed border-gray-600 pb-4 mb-1' : ''}`;
+                    
+                    // Adiciona uma marcação visual discreta se for a hora que está ativa no momento
+                    const tagAtual = hora === horaAtual ? ' <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 font-normal">Atual</span>' : '';
+
                     divLinha.innerHTML = `
-                        <div class="text-gray-300 font-mono">${hora}</div>
+                        <div class="text-gray-300 font-mono">${hora}${tagAtual}</div>
                         <div class="flex gap-8 text-center">
                             <span class="text-emerald-400 w-20">Entradas: ${entradas}</span>
                             <span class="text-red-400 w-20">Saídas: ${saidas}</span>
@@ -131,9 +143,33 @@
                 });
             }
 
+            // O saldo final de pessoas na área segura considera o histórico TODO (Entradas Totais - Saídas Totais)
+            // Se o histórico visível estiver vazio, recalculamos varrendo o objeto completo
+            if (horariosVisiveis.length === 0) {
+                Object.keys(dadosFluxo).forEach(hora => {
+                    totalGeralEntradas += dadosFluxo[hora].entradas;
+                    totalGeralSaidas += dadosFluxo[hora].saidas;
+                });
+            }
+
             const saldoFinal = totalGeralEntradas - totalGeralSaidas;
             document.getElementById('total-presentes').innerText = saldoFinal < 0 ? 0 : saldoFinal;
         }
+
+        // Função executada a cada 1 segundo para verificar a virada da hora no relógio do celular
+        function verificarViradaDeHora() {
+            const horaAgora = getHoraAtualStr();
+            if (horaAgora !== ultimaHoraRegistrada) {
+                ultimaHoraRegistrada = horaAgora;
+                inicializarHoraAtual();
+                atualizarInterface(); // Isso vai zerar os contadores visuais dos botões automaticamente
+            }
+        }
+
+        // Inicialização do App
+        inicializarHoraAtual();
+        atualizarInterface();
+        setInterval(verificarViradaDeHora, 1000); // Checa o relógio a cada segundo
     </script>
 </body>
 </html>
