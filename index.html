@@ -36,7 +36,12 @@
     </div>
 
     <div class="mt-6 bg-gray-800 rounded-2xl p-4 shadow-inner">
-        <h2 class="text-sm font-semibold tracking-wider text-gray-400 uppercase mb-3">Registros</h2>
+        <div class="flex justify-between items-center mb-3">
+            <h2 class="text-sm font-semibold tracking-wider text-gray-400 uppercase">Registros</h2>
+            <button onclick="limparHistorico()" class="text-xs text-red-400 hover:text-red-300 opacity-60 hover:opacity-100 transition-opacity">
+                Limpar Tudo
+            </button>
+        </div>
         
         <div id="lista-vazia" class="text-center py-6 text-gray-500 italic">
             Nenhuma marcação realizada ainda.
@@ -55,7 +60,8 @@
     </div>
 
     <script>
-        const dadosFluxo = {};
+        // Tenta carregar os dados salvos anteriormente, ou começa do zero se estiver vazio
+        const dadosFluxo = JSON.parse(localStorage.getItem('dadosFluxoContador')) || {};
         let ultimaHoraRegistrada = getHoraAtualStr();
 
         function getHoraAtualStr() {
@@ -63,12 +69,16 @@
             return `${String(agora.getHours()).padStart(2, '0')}:00`;
         }
 
-        // Garante que a hora atual sempre exista na nossa base de dados
         function inicializarHoraAtual() {
             const horaAtual = getHoraAtualStr();
             if (!dadosFluxo[horaAtual]) {
                 dadosFluxo[horaAtual] = { entradas: 0, saidas: 0 };
             }
+        }
+
+        // Nova função para salvar o estado atual no armazenamento do aparelho
+        function salvarDados() {
+            localStorage.setItem('dadosFluxoContador', JSON.stringify(dadosFluxo));
         }
 
         function registrar(tipo, valor) {
@@ -85,14 +95,25 @@
                 }
             }
 
+            salvarDados(); // Grava no celular a cada clique
             atualizarInterface();
+        }
+
+        function limparHistorico() {
+            if (confirm("Tem certeza que deseja apagar todo o histórico de registros e zerar o contador?")) {
+                localStorage.removeItem('dadosFluxoContador');
+                // Limpa o objeto na memória
+                for (let prop in dadosFluxo) { delete dadosFluxo[prop]; }
+                inicializarHoraAtual();
+                salvarDados();
+                atualizarInterface();
+            }
         }
 
         function atualizarInterface() {
             const horaAtual = getHoraAtualStr();
             inicializarHoraAtual();
             
-            // Atualiza os números grandes da tela com base APENAS na hora atual
             document.getElementById('btn-entrada-txt').innerText = dadosFluxo[horaAtual].entradas;
             document.getElementById('btn-saida-txt').innerText = dadosFluxo[horaAtual].saidas;
 
@@ -104,10 +125,7 @@
             let totalGeralEntradas = 0;
             let totalGeralSaidas = 0;
 
-            // Pega todas as horas registradas e ordena da mais recente para a mais antiga
             const horariosComDados = Object.keys(dadosFluxo).sort((a, b) => b.localeCompare(a));
-
-            // Filtra para não mostrar linhas totalmente zeradas no histórico, mantendo o painel limpo
             const horariosVisiveis = horariosComDados.filter(hora => dadosFluxo[hora].entradas > 0 || dadosFluxo[hora].saidas > 0);
 
             if (horariosVisiveis.length === 0) {
@@ -121,14 +139,12 @@
                     const entradas = dadosFluxo[hora].entradas;
                     const saidas = dadosFluxo[hora].saidas;
                     
-                    // O saldo acumulado geral continua contando tudo, mesmo de horas passadas
                     totalGeralEntradas += entradas;
                     totalGeralSaidas += saidas;
 
                     const divLinha = document.createElement('div');
                     divLinha.className = `flex justify-between items-center py-3 text-sm font-medium ${hora === horaAtual ? 'border-b border-dashed border-gray-600 pb-4 mb-1' : ''}`;
                     
-                    // Adiciona uma marcação visual discreta se for a hora que está ativa no momento
                     const tagAtual = hora === horaAtual ? ' <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 font-normal">Atual</span>' : '';
 
                     divLinha.innerHTML = `
@@ -143,8 +159,6 @@
                 });
             }
 
-            // O saldo final de pessoas na área segura considera o histórico TODO (Entradas Totais - Saídas Totais)
-            // Se o histórico visível estiver vazio, recalculamos varrendo o objeto completo
             if (horariosVisiveis.length === 0) {
                 Object.keys(dadosFluxo).forEach(hora => {
                     totalGeralEntradas += dadosFluxo[hora].entradas;
@@ -156,20 +170,20 @@
             document.getElementById('total-presentes').innerText = saldoFinal < 0 ? 0 : saldoFinal;
         }
 
-        // Função executada a cada 1 segundo para verificar a virada da hora no relógio do celular
         function verificarViradaDeHora() {
             const horaAgora = getHoraAtualStr();
             if (horaAgora !== ultimaHoraRegistrada) {
                 ultimaHoraRegistrada = horaAgora;
                 inicializarHoraAtual();
-                atualizarInterface(); // Isso vai zerar os contadores visuais dos botões automaticamente
+                salvarDados(); // Salva a virada de hora
+                atualizarInterface();
             }
         }
 
-        // Inicialização do App
+        // Inicialização do App com dados recuperados
         inicializarHoraAtual();
         atualizarInterface();
-        setInterval(verificarViradaDeHora, 1000); // Checa o relógio a cada segundo
+        setInterval(verificarViradaDeHora, 1000);
     </script>
 </body>
 </html>
