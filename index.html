@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Acesso Simplificado</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="manifest" href="manifest.json">
+    <link class="manifest" href="manifest.json">
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col p-4 select-none">
 
-    <!-- CONTAINER GRANDE DIVIDIDO AO MEIO (SEM MARGEM ENTRE ELES) -->
     <div class="grid grid-cols-2 flex-1 min-h-[60vh] rounded-2xl overflow-hidden shadow-lg">
         
-        <!-- LADO ESQUERDO: ENTRADA (VERDE) -->
         <div onclick="registrar('entrada', 1)" class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 flex flex-col justify-between cursor-pointer transition-colors relative group">
             <div class="text-center pt-6">
                 <span class="text-xl font-bold tracking-widest uppercase opacity-80">Entradas</span>
@@ -20,23 +18,20 @@
             </div>
             
             <div class="w-full flex flex-col m-0 p-0">
-                <!-- Botões de Incremento Rápido (+2 e +3) -->
-                <div class="grid grid-cols-2 h-12 border-t border-emerald-500/20 bg-emerald-700/30">
-                    <button onclick="event.stopPropagation(); registrar('entrada', 2)" class="hover:bg-black/20 text-emerald-100 font-bold text-base transition-colors border-r border-emerald-500/10">
+                <div class="grid grid-cols-2 h-16 border-t border-emerald-500/20 bg-emerald-700/30">
+                    <button onclick="event.stopPropagation(); registrar('entrada', 2)" class="hover:bg-black/20 text-emerald-100 font-black text-xl tracking-wide transition-colors border-r border-emerald-500/10">
                         +2
                     </button>
-                    <button onclick="event.stopPropagation(); registrar('entrada', 3)" class="hover:bg-black/20 text-emerald-100 font-bold text-base transition-colors">
+                    <button onclick="event.stopPropagation(); registrar('entrada', 3)" class="hover:bg-black/20 text-emerald-100 font-black text-xl tracking-wide transition-colors">
                         +3
                     </button>
                 </div>
-                <!-- Botão Retornar -->
                 <button onclick="event.stopPropagation(); registrar('entrada', -1)" class="w-full h-10 bg-emerald-900 hover:bg-black/30 text-emerald-200 font-semibold text-sm transition-colors border-t border-emerald-500/20">
                     Retornar
                 </button>
             </div>
         </div>
 
-        <!-- LADO DIREITO: SAÍDA (VERMELHO) -->
         <div onclick="registrar('saida', 1)" class="bg-red-600 hover:bg-red-700 active:bg-red-800 flex flex-col justify-between cursor-pointer transition-colors relative group">
             <div class="text-center pt-6">
                 <span class="text-xl font-bold tracking-widest uppercase opacity-80">Saídas</span>
@@ -44,16 +39,14 @@
             </div>
             
             <div class="w-full flex flex-col m-0 p-0">
-                <!-- Botões de Incremento Rápido (+2 e +3) -->
-                <div class="grid grid-cols-2 h-12 border-t border-red-500/20 bg-red-700/30">
-                    <button onclick="event.stopPropagation(); registrar('saida', 2)" class="hover:bg-black/20 text-red-100 font-bold text-base transition-colors border-r border-red-500/10">
+                <div class="grid grid-cols-2 h-16 border-t border-red-500/20 bg-red-700/30">
+                    <button onclick="event.stopPropagation(); registrar('saida', 2)" class="hover:bg-black/20 text-red-100 font-black text-xl tracking-wide transition-colors border-r border-red-500/10">
                         +2
                     </button>
-                    <button onclick="event.stopPropagation(); registrar('saida', 3)" class="hover:bg-black/20 text-red-100 font-bold text-base transition-colors">
+                    <button onclick="event.stopPropagation(); registrar('saida', 3)" class="hover:bg-black/20 text-red-100 font-black text-xl tracking-wide transition-colors">
                         +3
                     </button>
                 </div>
-                <!-- Botão Retornar -->
                 <button onclick="event.stopPropagation(); registrar('saida', -1)" class="w-full h-10 bg-red-900 hover:bg-black/30 text-red-200 font-semibold text-sm transition-colors border-t border-red-500/20">
                     Retornar
                 </button>
@@ -62,7 +55,6 @@
 
     </div>
 
-    <!-- LISTA DE REGISTROS -->
     <div class="mt-6 bg-gray-800 rounded-2xl p-4 shadow-inner">
         <div class="flex justify-between items-center mb-3">
             <h2 class="text-sm font-semibold tracking-wider text-gray-400 uppercase">Registros</h2>
@@ -76,11 +68,9 @@
         </div>
 
         <div id="tabela-horarios" class="divide-y divide-gray-700 hidden">
-            <!-- As linhas de 1 hora entrarão aqui dinamicamente -->
-        </div>
+            </div>
     </div>
 
-    <!-- PAINEL INFERIOR: PESSOAS DENTRO -->
     <div class="mt-4 bg-gray-950 rounded-2xl p-5 flex justify-between items-center border border-gray-800">
         <div>
             <h3 class="text-lg font-bold text-gray-200">Pessoas na Área de Segurança</h3>
@@ -144,10 +134,10 @@
             document.getElementById('btn-entrada-txt').innerText = dadosFluxo[horaAtual].entradas;
             document.getElementById('btn-saida-txt').innerText = dadosFluxo[horaAtual].saidas;
 
-            const tabelaCorpo = document.getElementById('tabela-horarios');
+            const tableBody = document.getElementById('tabela-horarios');
             const listaVazia = document.getElementById('lista-vazia');
             
-            tabelaCorpo.innerHTML = '';
+            tableBody.innerHTML = '';
             
             let totalGeralEntradas = 0;
             let totalGeralSaidas = 0;
@@ -157,10 +147,10 @@
 
             if (horariosVisiveis.length === 0) {
                 listaVazia.classList.remove('hidden');
-                tabelaCorpo.classList.add('hidden');
+                tableBody.classList.add('hidden');
             } else {
                 listaVazia.classList.add('hidden');
-                tabelaCorpo.classList.remove('hidden');
+                tableBody.classList.remove('hidden');
 
                 horariosVisiveis.forEach(hora => {
                     const entradas = dadosFluxo[hora].entradas;
@@ -182,7 +172,7 @@
                         </div>
                         <div class="text-gray-400 text-xs">Saldo: ${entradas - saidas}</div>
                     `;
-                    tabelaCorpo.appendChild(divLinha);
+                    tableBody.appendChild(divLinha);
                 });
             }
 
@@ -207,310 +197,6 @@
             }
         }
 
-        inicializarHoraAtual();
-        atualizarInterface();
-        setInterval(verificarViradaDeHora, 1000);
-    </script>
-</body>
-</html>a
-    <div class="mt-6 bg-gray-800 rounded-2xl p-4 shadow-inner">
-        <div class="flex justify-between items-center mb-3">
-            <h2 class="text-sm font-semibold tracking-wider text-gray-400 uppercase">Registros</h2>
-            <button onclick="limparHistorico()" class="text-xs text-red-400 hover:text-red-300 opacity-60 hover:opacity-100 transition-opacity">
-                Limpar Tudo
-            </button>
-        </div>
-        
-        <div id="lista-vazia" class="text-center py-6 text-gray-500 italic">
-            Nenhuma marcação realizada ainda.
-        </div>
-
-        <div id="tabela-horarios" class="divide-y divide-gray-700 hidden">
-            </div>
-    </div>
-
-    <div class="mt-4 bg-gray-950 rounded-2xl p-5 flex justify-between items-center border border-gray-800">
-        <div>
-            <h3 class="text-lg font-bold text-gray-200">Pessoas na Área de Segurança</h3>
-            <p class="text-xs text-gray-500">Saldo total dentro do perímetro</p>
-        </div>
-        <div id="total-presentes" class="text-5xl font-black text-yellow-400">0</div>
-    </div>
-
-    <script>
-        // Tenta carregar os dados salvos anteriormente, ou começa do zero se estiver vazio
-        const dadosFluxo = JSON.parse(localStorage.getItem('dadosFluxoContador')) || {};
-        let ultimaHoraRegistrada = getHoraAtualStr();
-
-        function getHoraAtualStr() {
-            const agora = new Date();
-            return `${String(agora.getHours()).padStart(2, '0')}:00`;
-        }
-
-        function inicializarHoraAtual() {
-            const horaAtual = getHoraAtualStr();
-            if (!dadosFluxo[horaAtual]) {
-                dadosFluxo[horaAtual] = { entradas: 0, saidas: 0 };
-            }
-        }
-
-        // Nova função para salvar o estado atual no armazenamento do aparelho
-        function salvarDados() {
-            localStorage.setItem('dadosFluxoContador', JSON.stringify(dadosFluxo));
-        }
-
-        function registrar(tipo, valor) {
-            const horaAtual = getHoraAtualStr();
-            inicializarHoraAtual();
-
-            if (tipo === 'entrada') {
-                if (dadosFluxo[horaAtual].entradas + valor >= 0) {
-                    dadosFluxo[horaAtual].entradas += valor;
-                }
-            } else if (tipo === 'saida') {
-                if (dadosFluxo[horaAtual].saidas + valor >= 0) {
-                    dadosFluxo[horaAtual].saidas += valor;
-                }
-            }
-
-            salvarDados(); // Grava no celular a cada clique
-            atualizarInterface();
-        }
-
-        function limparHistorico() {
-            if (confirm("Tem certeza que deseja apagar todo o histórico de registros e zerar o contador?")) {
-                localStorage.removeItem('dadosFluxoContador');
-                // Limpa o objeto na memória
-                for (let prop in dadosFluxo) { delete dadosFluxo[prop]; }
-                inicializarHoraAtual();
-                salvarDados();
-                atualizarInterface();
-            }
-        }
-
-        function atualizarInterface() {
-            const horaAtual = getHoraAtualStr();
-            inicializarHoraAtual();
-            
-            document.getElementById('btn-entrada-txt').innerText = dadosFluxo[horaAtual].entradas;
-            document.getElementById('btn-saida-txt').innerText = dadosFluxo[horaAtual].saidas;
-
-            const tabelaCorpo = document.getElementById('tabela-horarios');
-            const listaVazia = document.getElementById('lista-vazia');
-            
-            tabelaCorpo.innerHTML = '';
-            
-            let totalGeralEntradas = 0;
-            let totalGeralSaidas = 0;
-
-            const horariosComDados = Object.keys(dadosFluxo).sort((a, b) => b.localeCompare(a));
-            const horariosVisiveis = horariosComDados.filter(hora => dadosFluxo[hora].entradas > 0 || dadosFluxo[hora].saidas > 0);
-
-            if (horariosVisiveis.length === 0) {
-                listaVazia.classList.remove('hidden');
-                tabelaCorpo.classList.add('hidden');
-            } else {
-                listaVazia.classList.add('hidden');
-                tabelaCorpo.classList.remove('hidden');
-
-                horariosVisiveis.forEach(hora => {
-                    const entradas = dadosFluxo[hora].entradas;
-                    const saidas = dadosFluxo[hora].saidas;
-                    
-                    totalGeralEntradas += entradas;
-                    totalGeralSaidas += saidas;
-
-                    const divLinha = document.createElement('div');
-                    divLinha.className = `flex justify-between items-center py-3 text-sm font-medium ${hora === horaAtual ? 'border-b border-dashed border-gray-600 pb-4 mb-1' : ''}`;
-                    
-                    const tagAtual = hora === horaAtual ? ' <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 font-normal">Atual</span>' : '';
-
-                    divLinha.innerHTML = `
-                        <div class="text-gray-300 font-mono">${hora}${tagAtual}</div>
-                        <div class="flex gap-8 text-center">
-                            <span class="text-emerald-400 w-20">Entradas: ${entradas}</span>
-                            <span class="text-red-400 w-20">Saídas: ${saidas}</span>
-                        </div>
-                        <div class="text-gray-400 text-xs">Saldo: ${entradas - saidas}</div>
-                    `;
-                    tabelaCorpo.appendChild(divLinha);
-                });
-            }
-
-            if (horariosVisiveis.length === 0) {
-                Object.keys(dadosFluxo).forEach(hora => {
-                    totalGeralEntradas += dadosFluxo[hora].entradas;
-                    totalGeralSaidas += dadosFluxo[hora].saidas;
-                });
-            }
-
-            const saldoFinal = totalGeralEntradas - totalGeralSaidas;
-            document.getElementById('total-presentes').innerText = saldoFinal < 0 ? 0 : saldoFinal;
-        }
-
-        function verificarViradaDeHora() {
-            const horaAgora = getHoraAtualStr();
-            if (horaAgora !== ultimaHoraRegistrada) {
-                ultimaHoraRegistrada = horaAgora;
-                inicializarHoraAtual();
-                salvarDados(); // Salva a virada de hora
-                atualizarInterface();
-            }
-        }
-
-        // Inicialização do App com dados recuperados
-        inicializarHoraAtual();
-        atualizarInterface();
-        setInterval(verificarViradaDeHora, 1000);
-    </script>
-</body>
-</html>2
-    <div class="mt-6 bg-gray-800 rounded-2xl p-4 shadow-inner">
-        <div class="flex justify-between items-center mb-3">
-            <h2 class="text-sm font-semibold tracking-wider text-gray-400 uppercase">Registros</h2>
-            <button onclick="limparHistorico()" class="text-xs text-red-400 hover:text-red-300 opacity-60 hover:opacity-100 transition-opacity">
-                Limpar Tudo
-            </button>
-        </div>
-        
-        <div id="lista-vazia" class="text-center py-6 text-gray-500 italic">
-            Nenhuma marcação realizada ainda.
-        </div>
-
-        <div id="tabela-horarios" class="divide-y divide-gray-700 hidden">
-            </div>
-    </div>
-
-    <div class="mt-4 bg-gray-950 rounded-2xl p-5 flex justify-between items-center border border-gray-800">
-        <div>
-            <h3 class="text-lg font-bold text-gray-200">Pessoas na Área de Segurança</h3>
-            <p class="text-xs text-gray-500">Saldo total dentro do perímetro</p>
-        </div>
-        <div id="total-presentes" class="text-5xl font-black text-yellow-400">0</div>
-    </div>
-
-    <script>
-        // Tenta carregar os dados salvos anteriormente, ou começa do zero se estiver vazio
-        const dadosFluxo = JSON.parse(localStorage.getItem('dadosFluxoContador')) || {};
-        let ultimaHoraRegistrada = getHoraAtualStr();
-
-        function getHoraAtualStr() {
-            const agora = new Date();
-            return `${String(agora.getHours()).padStart(2, '0')}:00`;
-        }
-
-        function inicializarHoraAtual() {
-            const horaAtual = getHoraAtualStr();
-            if (!dadosFluxo[horaAtual]) {
-                dadosFluxo[horaAtual] = { entradas: 0, saidas: 0 };
-            }
-        }
-
-        // Nova função para salvar o estado atual no armazenamento do aparelho
-        function salvarDados() {
-            localStorage.setItem('dadosFluxoContador', JSON.stringify(dadosFluxo));
-        }
-
-        function registrar(tipo, valor) {
-            const horaAtual = getHoraAtualStr();
-            inicializarHoraAtual();
-
-            if (tipo === 'entrada') {
-                if (dadosFluxo[horaAtual].entradas + valor >= 0) {
-                    dadosFluxo[horaAtual].entradas += valor;
-                }
-            } else if (tipo === 'saida') {
-                if (dadosFluxo[horaAtual].saidas + valor >= 0) {
-                    dadosFluxo[horaAtual].saidas += valor;
-                }
-            }
-
-            salvarDados(); // Grava no celular a cada clique
-            atualizarInterface();
-        }
-
-        function limparHistorico() {
-            if (confirm("Tem certeza que deseja apagar todo o histórico de registros e zerar o contador?")) {
-                localStorage.removeItem('dadosFluxoContador');
-                // Limpa o objeto na memória
-                for (let prop in dadosFluxo) { delete dadosFluxo[prop]; }
-                inicializarHoraAtual();
-                salvarDados();
-                atualizarInterface();
-            }
-        }
-
-        function atualizarInterface() {
-            const horaAtual = getHoraAtualStr();
-            inicializarHoraAtual();
-            
-            document.getElementById('btn-entrada-txt').innerText = dadosFluxo[horaAtual].entradas;
-            document.getElementById('btn-saida-txt').innerText = dadosFluxo[horaAtual].saidas;
-
-            const tabelaCorpo = document.getElementById('tabela-horarios');
-            const listaVazia = document.getElementById('lista-vazia');
-            
-            tabelaCorpo.innerHTML = '';
-            
-            let totalGeralEntradas = 0;
-            let totalGeralSaidas = 0;
-
-            const horariosComDados = Object.keys(dadosFluxo).sort((a, b) => b.localeCompare(a));
-            const horariosVisiveis = horariosComDados.filter(hora => dadosFluxo[hora].entradas > 0 || dadosFluxo[hora].saidas > 0);
-
-            if (horariosVisiveis.length === 0) {
-                listaVazia.classList.remove('hidden');
-                tabelaCorpo.classList.add('hidden');
-            } else {
-                listaVazia.classList.add('hidden');
-                tabelaCorpo.classList.remove('hidden');
-
-                horariosVisiveis.forEach(hora => {
-                    const entradas = dadosFluxo[hora].entradas;
-                    const saidas = dadosFluxo[hora].saidas;
-                    
-                    totalGeralEntradas += entradas;
-                    totalGeralSaidas += saidas;
-
-                    const divLinha = document.createElement('div');
-                    divLinha.className = `flex justify-between items-center py-3 text-sm font-medium ${hora === horaAtual ? 'border-b border-dashed border-gray-600 pb-4 mb-1' : ''}`;
-                    
-                    const tagAtual = hora === horaAtual ? ' <span class="text-xs bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 font-normal">Atual</span>' : '';
-
-                    divLinha.innerHTML = `
-                        <div class="text-gray-300 font-mono">${hora}${tagAtual}</div>
-                        <div class="flex gap-8 text-center">
-                            <span class="text-emerald-400 w-20">Entradas: ${entradas}</span>
-                            <span class="text-red-400 w-20">Saídas: ${saidas}</span>
-                        </div>
-                        <div class="text-gray-400 text-xs">Saldo: ${entradas - saidas}</div>
-                    `;
-                    tabelaCorpo.appendChild(divLinha);
-                });
-            }
-
-            if (horariosVisiveis.length === 0) {
-                Object.keys(dadosFluxo).forEach(hora => {
-                    totalGeralEntradas += dadosFluxo[hora].entradas;
-                    totalGeralSaidas += dadosFluxo[hora].saidas;
-                });
-            }
-
-            const saldoFinal = totalGeralEntradas - totalGeralSaidas;
-            document.getElementById('total-presentes').innerText = saldoFinal < 0 ? 0 : saldoFinal;
-        }
-
-        function verificarViradaDeHora() {
-            const horaAgora = getHoraAtualStr();
-            if (horaAgora !== ultimaHoraRegistrada) {
-                ultimaHoraRegistrada = horaAgora;
-                inicializarHoraAtual();
-                salvarDados(); // Salva a virada de hora
-                atualizarInterface();
-            }
-        }
-
-        // Inicialização do App com dados recuperados
         inicializarHoraAtual();
         atualizarInterface();
         setInterval(verificarViradaDeHora, 1000);
